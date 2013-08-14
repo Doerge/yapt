@@ -5,7 +5,7 @@ Yet Another Python tail'er is a small python-script for continuos colorization
 of your log-files.
 
 YAPt aims to be:
-- Work like tail -f.
+- Working like tail -f.
 - Simple.
 - Lightweight.
 - Easily modified to custom needs.
@@ -18,6 +18,13 @@ Usage
 -----
 
     $ ./yapt some.log
+    INFO: Here is some info in green.
+    WARNING: Here is a warning in yellow.
+    ERROR: This is an error in red.
+    ^C
+    $
+
+For help:
 
     $ ./yapt -h
     usage: yapt.py [-h] file
