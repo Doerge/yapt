@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function loadXMLDoc(url)
+{
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+      // Retrieve any new content:
+      document.getElementById('log').innerHTML=xmlhttp.responseText;
+      // Scroll to the bottom
+      document.getElementById('bottom').scrollIntoView();
+    }
+  }
+xmlhttp.open("GET",url,true);
+xmlhttp.send();
+}
+
+setInterval(function(){loadXMLDoc('colored.log')},1000)
+</script>
+<style>
+body {background-color:#000000;}
+#red
+{
+  font-family:Menlo;
+  color:#FF0000;
+  font-size:11px;
+}
+#green
+{
+  font-family:Menlo;
+  color:#00CC00;
+  font-size:11px;
+}
+#yellow
+{
+  font-family:Menlo;
+  color:#FFFF00;
+  font-size:11px;
+}
+</style>
+</head>
+<body>
+<span id="log"></span>
+<span id="bottom"></span>
+</body>
+</html>

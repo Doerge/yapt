@@ -46,21 +46,49 @@ def soft_wrap(lines):
         final = first + '\n' + '\n'.join(rest)
         yield final
 
-if __name__ == "__main__":
-  try:
-    parser = argparse.ArgumentParser(description='A colorized version of \'tail -f\'')
-    parser.add_argument('filepath', metavar='file', type=str,
-                       help='The file to tail.')
-    args = parser.parse_args()
-    
-    # Pipeline:
-    with open(args.filepath,'r') as logfile:
-      loglines = follow(logfile)
-      softlines = soft_wrap(loglines)
-      colorlines = color(softlines)
+def htmlcolor(lines):
+  GREEN = '<p id="green">%s</p>\n'
+  YELLOW = '<p id="yellow">%s</p>\n'
+  RED = '<p id="red">%s</p>\n'
+  while True:
+    for line in lines:
+      # We are 'wrapping' the color-codes around the line.
+      if line.endswith('\n'):
+        line = line[:-1]
+      if line.startswith('INFO'):
+        yield GREEN % line
+      if line.startswith('WARNING'):
+        yield YELLOW % line
+      if line.startswith('ERROR'):
+        yield RED % line
+
+def serve(filepath):
+  # Pipeline:
+  with open(filepath,'r') as logfile:
+    loglines = follow(logfile)
+    # softlines = soft_wrap(loglines)
+    colorlines = htmlcolor(loglines)
+    with open('colored.log','w') as f:
       for line in colorlines:
-        print line,
-  except KeyboardInterrupt:
-    # Hush... Cleanup please:
-    print '\033[0m'
-    pass
+        f.write(line)
+        f.flush()
+
+if __name__ == "__main__":
+  serve('access.log')
+  # try:
+  #   parser = argparse.ArgumentParser(description='A colorized version of \'tail -f\'')
+  #   parser.add_argument('filepath', metavar='file', type=str,
+  #                      help='The file to tail.')
+  #   args = parser.parse_args()
+  #   
+  #   # Pipeline:
+  #   with open(args.filepath,'r') as logfile:
+  #     loglines = follow(logfile)
+  #     softlines = soft_wrap(loglines)
+  #     colorlines = color(softlines)
+  #     for line in colorlines:
+  #       print line,
+  # except KeyboardInterrupt:
+  #   # Hush... Cleanup please:
+  #   print '\033[0m'
+  #   pass
