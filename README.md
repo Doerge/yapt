@@ -45,3 +45,27 @@ For help:
                             If specified, writes tagged HTML to outfile, ready for
                             serving.
 
+Try it
+------
+Execute `test_writer.py` in a shell:
+
+    $ ./test_writer.py
+    ...
+
+Then in another shell:
+
+    $ ./yapt.py access.log
+    ...
+
+This will print out a colored indented version of `access.log`.
+Executing
+
+    $ ./yapt.py access.log -o colored.log
+
+will save tagged html into `colored.log`.
+To see this, execute this in another shell
+
+    $ python -m SimpleHTTPServer
+
+to start serving requests. Then access the example at
+`http://0.0.0.0:8000/serve_log.html`.
