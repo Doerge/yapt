@@ -46,6 +46,15 @@ def soft_wrap(lines):
         final = first + '\n' + '\n'.join(rest)
         yield final
 
+def tail_print(filepath):
+  # Pipeline:
+  with open(args.filepath,'r') as logfile:
+    loglines = follow(logfile)
+    softlines = soft_wrap(loglines)
+    colorlines = color(softlines)
+    for line in colorlines:
+      print line,
+
 def htmlcolor(lines):
   GREEN = '<p id="green">%s</p>\n'
   YELLOW = '<p id="yellow">%s</p>\n'
@@ -62,33 +71,32 @@ def htmlcolor(lines):
       if line.startswith('ERROR'):
         yield RED % line
 
-def serve(filepath):
+def tail_serve(filepath,outfile):
   # Pipeline:
   with open(filepath,'r') as logfile:
     loglines = follow(logfile)
-    # softlines = soft_wrap(loglines)
     colorlines = htmlcolor(loglines)
-    with open('colored.log','w') as f:
+    with open(outfile,'w') as f:
       for line in colorlines:
         f.write(line)
         f.flush()
-
+  
 if __name__ == "__main__":
-  serve('access.log')
-  # try:
-  #   parser = argparse.ArgumentParser(description='A colorized version of \'tail -f\'')
-  #   parser.add_argument('filepath', metavar='file', type=str,
-  #                      help='The file to tail.')
-  #   args = parser.parse_args()
-  #   
-  #   # Pipeline:
-  #   with open(args.filepath,'r') as logfile:
-  #     loglines = follow(logfile)
-  #     softlines = soft_wrap(loglines)
-  #     colorlines = color(softlines)
-  #     for line in colorlines:
-  #       print line,
-  # except KeyboardInterrupt:
-  #   # Hush... Cleanup please:
-  #   print '\033[0m'
-  #   pass
+  # serve('access.log','colored.log')
+  try:
+    parser = argparse.ArgumentParser(description='A colorized version of \'tail -f\'')
+    parser.add_argument('filepath', metavar='file', type=str,
+                       help='The file to tail.')
+    parser.add_argument('-o','--outfile', metavar='file', type=str, required=False,
+                       help='If specified, writes tagged HTML to outfile, ready for serving.')
+    args = parser.parse_args()
+    
+    if args.outfile:
+      tail_serve(args.filepath,args.outfile)
+    else:
+      tail_print(args.filepath)
+    
+  except KeyboardInterrupt:
+    # Hush... Cleanup please:
+    print '\033[0m'
+    pass
